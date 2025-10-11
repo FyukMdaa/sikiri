@@ -393,6 +393,10 @@ impl<W: LayoutElement> Monitor<W> {
         &mut self.workspaces[self.active_workspace_idx]
     }
 
+    pub fn jump_to_layer(&mut self, layer_idx: usize) {
+    self.active_workspace().jump_to_layer(layer_idx);
+}
+
     pub fn windows(&self) -> impl Iterator<Item = &W> {
         self.workspaces.iter().flat_map(|ws| ws.windows())
     }

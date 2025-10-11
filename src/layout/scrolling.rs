@@ -38,7 +38,7 @@ pub struct ScrollingSpace<W: LayoutElement> {
     data: Vec<ColumnData>,
 
     /// Index of the currently active column, if any.
-    active_column_idx: usize,
+    pub(super) active_column_idx: usize,
 
     /// Ongoing interactive resize.
     interactive_resize: Option<InteractiveResize<W>>,
@@ -743,7 +743,7 @@ impl<W: LayoutElement> ScrollingSpace<W> {
         )
     }
 
-    fn activate_column(&mut self, idx: usize) {
+    pub fn activate_column(&mut self, idx: usize) {
         self.activate_column_with_anim_config(
             idx,
             self.options.animations.horizontal_view_movement.0,
@@ -2288,7 +2288,7 @@ impl<W: LayoutElement> ScrollingSpace<W> {
         })
     }
 
-    fn column_x(&self, column_idx: usize) -> f64 {
+    pub(super) fn column_x(&self, column_idx: usize) -> f64 {
         self.column_xs(self.data.iter().copied())
             .nth(column_idx)
             .unwrap()
@@ -3655,6 +3655,9 @@ impl<W: LayoutElement> ScrollingSpace<W> {
                 "interactive resize window must be present in the layout"
             );
         }
+    }
+    pub(super) fn columns_len(&self) -> usize {
+        self.columns.len()
     }
 }
 

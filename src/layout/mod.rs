@@ -1650,17 +1650,17 @@ impl<W: LayoutElement> Layout<W> {
         }
     }
 
-    fn active_monitor(&mut self) -> Option<&mut Monitor<W>> {
-        let MonitorSet::Normal {
-            monitors,
-            active_monitor_idx,
-            ..
-        } = &mut self.monitor_set
-        else {
-            return None;
-        };
+    pub fn active_monitor(&mut self) -> Option<&mut Monitor<W>> {
+            let MonitorSet::Normal {
+                monitors,
+                active_monitor_idx,
+                ..
+            } = &mut self.monitor_set
+            else {
+                return None;
+            };
 
-        Some(&mut monitors[*active_monitor_idx])
+            Some(&mut monitors[*active_monitor_idx])
     }
 
     pub fn active_monitor_ref(&self) -> Option<&Monitor<W>> {

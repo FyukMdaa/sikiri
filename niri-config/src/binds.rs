@@ -206,6 +206,11 @@ pub enum Action {
     FocusWorkspaceUpUnderMouse,
     FocusWorkspace(#[knuffel(argument)] WorkspaceReference),
     FocusWorkspacePrevious,
+    FocusLayer(#[knuffel(argument)] u8),
+    MoveWindowToLayer(
+        #[knuffel(argument)] u8,
+        #[knuffel(property(name = "focus"), default = true)] bool,
+    ),
     MoveWindowToWorkspaceDown(#[knuffel(property(name = "focus"), default = true)] bool),
     MoveWindowToWorkspaceUp(#[knuffel(property(name = "focus"), default = true)] bool),
     MoveWindowToWorkspace(

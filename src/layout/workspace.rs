@@ -52,6 +52,17 @@ pub struct Workspace<W: LayoutElement> {
     /// Whether the floating layout is active instead of the scrolling layout.
     floating_is_active: FloatingActive,
 
+    // ========== 新規追加 ==========
+    /// Layer boundaries within this workspace.
+    /// 
+    /// Each value represents the last column index of a layer.
+    /// Example: [2, 5] means:
+    ///   - Layer 0: columns 0-2
+    ///   - Layer 1: columns 3-5
+    ///   - Layer 2: columns 6+
+    layer_boundaries: Vec<usize>,
+    // ==============================
+
     /// The original output of this workspace.
     ///
     /// Most of the time this will be the workspace's current output, however, after an output
@@ -258,6 +269,7 @@ impl<W: LayoutElement> Workspace<W> {
             scrolling,
             floating,
             floating_is_active: FloatingActive::No,
+            layer_boundaries: Vec::new(),
             original_output,
             scale,
             transform: output.current_transform(),
@@ -324,6 +336,7 @@ impl<W: LayoutElement> Workspace<W> {
             scrolling,
             floating,
             floating_is_active: FloatingActive::No,
+            layer_boundaries: Vec::new(),
             output: None,
             scale,
             transform: Transform::Normal,
@@ -1933,6 +1946,44 @@ impl<W: LayoutElement> Workspace<W> {
                 );
             }
         }
+    }
+
+    /// Get the first column index of a given layer.
+    fn get_first_column_of_layer(&self, layer_idx: usize) -> usize {
+        let layer_width = self.view_size.w;
+        let target_x_start = layer_width * layer_idx as f64;
+        let target_x_end = layer_width * (layer_idx + 1) as f64;
+        
+        // そのレイヤー範囲内で最初のColumnを探す
+        for idx in 0..self.scrolling.columns_len() {
+            let col_x = self.scrolling.column_x(idx);
+            if col_x >= target_x_start && col_x < target_x_end {
+                return idx;  // レイヤー内の最初のColumn
+            }
+        }
+        
+        // 見つからなければ、target_x_start以降の最初のColumn
+        for idx in 0..self.scrolling.columns_len() {
+            let col_x = self.scrolling.column_x(idx);
+            if col_x >= target_x_start {
+                return idx;
+            }
+        }
+        
+        self.scrolling.columns_len().saturating_sub(1)
+    }
+        /// 現在のレイヤー番号を取得
+    pub fn current_layer_idx(&self) -> usize {
+        let active_col_idx = self.scrolling.active_column_idx;
+        let col_x = self.scrolling.column_x(active_col_idx);
+        let layer_width = self.view_size.w;
+        
+        (col_x / layer_width).floor() as usize
+    }
+    
+    pub fn jump_to_layer(&mut self, layer_idx: usize) {
+        let column_idx = self.get_first_column_of_layer(layer_idx);
+        self.scrolling.activate_column(column_idx);
     }
 }
 

@@ -51,6 +51,14 @@ This fork was created by a programming beginner with AI assistance. Stability ca
 **Bug Reports:**
 If you find a bug, please do not report it to the original niri project. The bug is likely caused by changes made in this fork.
 
+## Installation
+``` shell
+git clone https://github.com/FyukMdaa/sikiri.git
+cd sikiri
+cargo build --release
+sudo cp target/release/sikiri /usr/bin/sikiri
+```
+
 ## Inspiration
 
 This project was strongly influenced by its forked source, niri, and traditional tiling window managers like Hyprland.

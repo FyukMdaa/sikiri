@@ -50,6 +50,14 @@ Sikiri はウィンドウを右方向に無限に伸びるストリップ上に�
 **バグ報告について**
 バグを発見した場合は、元の niri プロジェクトには報告しないでください。多くの場合、このフォークによる変更が原因です。
 
+## インストール方法
+``` shell
+git clone https://github.com/FyukMdaa/sikiri.git
+cd sikiri
+cargo build --release
+sudo cp target/release/sikiri /usr/bin/sikiri
+```
+
 ## Inspiration / 謝辞
 
 本プロジェクトは niri や Hyprland などの伝統的なタイル型ウィンドウマネージャから強い影響を受けています。

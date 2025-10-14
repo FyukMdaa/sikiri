@@ -1371,16 +1371,7 @@ impl State {
                     self.niri.queue_redraw_all();
                 }
             }
-            Action::FocusLayer(layer_idx) => {
-                if let Some(mon) = self.niri.layout.active_monitor() {
-                    mon.jump_to_layer(layer_idx as usize - 1);
-                    self.maybe_warp_cursor_to_focus();
-                    self.niri.queue_redraw_all();
-                }
-            }
-            Action::MoveWindowToLayer(layer_idx, focus) => {
-                // TODO: ウィンドウをレイヤーに移動する機能は後で実装
-                // とりあえずは何もしない
+            Action::MoveWindowToLayer(_layer_idx, _focus) => {
                 warn!("MoveWindowToLayer is not yet implemented");
             }
             Action::MoveWorkspaceDown => {

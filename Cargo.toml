@@ -49,6 +49,10 @@ rust-version.workspace = true
 readme = "README.md"
 keywords = ["wayland", "compositor", "tiling", "smithay", "wm"]
 
+[[bin]]
+name = "sikiri"
+path = "src/main.rs"
+
 [dependencies]
 accesskit = { version = "0.21.0", optional = true }
 accesskit_unix = { version = "0.17.0", optional = true }

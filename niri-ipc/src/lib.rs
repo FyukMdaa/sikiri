@@ -1292,6 +1292,8 @@ pub struct Workspace {
     pub is_focused: bool,
     /// Id of the active window on this workspace, if any.
     pub active_window_id: Option<u64>,
+    /// Current layer index within this workspace.
+    pub current_layer: usize,
 }
 
 /// Configured keyboard layouts.
@@ -1382,6 +1384,13 @@ pub enum Event {
         workspace_id: u64,
         /// Id of the new active window, if any.
         active_window_id: Option<u64>,
+    },
+    /// 【追加】ワークスペース内のアクティブなレイヤーが変更された
+    WorkspaceLayerChanged {
+        // イベントが発生したワークスペースのID
+        workspace_id: u32,
+        /// 変更後の、アクティブなレイヤーのインデックス
+        current_layer: usize,
     },
     /// The window configuration has changed.
     WindowsChanged {

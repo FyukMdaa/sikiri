@@ -432,6 +432,10 @@ pub fn handle_msg(msg: Msg, json: bool) -> anyhow::Result<()> {
                              active window changed to {active_window_id:?}"
                         );
                     }
+                    niri_ipc::Event::WorkspaceLayerChanged { .. } => {
+                            // 今は何もしない (またはデバッグ出力)
+                            // println!("Received WorkspaceLayerChanged event");
+                    }
                     Event::WindowsChanged { windows } => {
                         println!("Windows changed: {windows:?}");
                     }

@@ -1951,39 +1951,66 @@ impl<W: LayoutElement> Workspace<W> {
     /// Get the first column index of a given layer.
     fn get_first_column_of_layer(&self, layer_idx: usize) -> usize {
         let layer_width = self.view_size.w;
-        let target_x_start = layer_width * layer_idx as f64;
-        let target_x_end = layer_width * (layer_idx + 1) as f64;
+        let target_x = layer_width * layer_idx as f64;
         
-        // そのレイヤー範囲内で最初のColumnを探す
-        for idx in 0..self.scrolling.columns_len() {
+        let columns_len = self.scrolling.columns_len();
+        if columns_len == 0 {
+            return 0;
+        }
+        
+        // target_xに最も近いColumnを探す
+        let mut closest_idx = 0;
+        let mut min_distance = f64::MAX;
+        
+        for idx in 0..columns_len {
             let col_x = self.scrolling.column_x(idx);
-            if col_x >= target_x_start && col_x < target_x_end {
-                return idx;  // レイヤー内の最初のColumn
+            let distance = (col_x - target_x).abs();
+            
+            if distance < min_distance {
+                min_distance = distance;
+                closest_idx = idx;
             }
         }
         
-        // 見つからなければ、target_x_start以降の最初のColumn
-        for idx in 0..self.scrolling.columns_len() {
-            let col_x = self.scrolling.column_x(idx);
-            if col_x >= target_x_start {
-                return idx;
-            }
-        }
+        eprintln!("get_first_column: layer={}, target_x={}, found_col={}, col_x={}", 
+                layer_idx, target_x, closest_idx, self.scrolling.column_x(closest_idx));
         
-        self.scrolling.columns_len().saturating_sub(1)
+        closest_idx
     }
-        /// 現在のレイヤー番号を取得
+
+    /// 現在のレイヤー番号を取得 (変更なし)
     pub fn current_layer_idx(&self) -> usize {
         let active_col_idx = self.scrolling.active_column_idx;
         let col_x = self.scrolling.column_x(active_col_idx);
         let layer_width = self.view_size.w;
-        
-        (col_x / layer_width).floor() as usize
+        let result = (col_x / layer_width).floor() as usize;
+
+        eprintln!(
+        "DEBUG current_layer_idx: active_col={}, col_x={}, layer_width={}, result={}",
+        active_col_idx, col_x, layer_width, result
+        );
+
+        result
     }
-    
+
+    // jump_to_layerを修正
     pub fn jump_to_layer(&mut self, layer_idx: usize) {
+        eprintln!("TRACE: jump_to_layer() called with layer_idx={}", layer_idx);
         let column_idx = self.get_first_column_of_layer(layer_idx);
+        let target_x = self.scrolling.column_x(column_idx);
+
+        eprintln!(
+            "jump_to_layer: layer={}, target_column={}, target_x={}",
+            layer_idx, column_idx, target_x
+        );
+
+        // 1. カラムをアクティブにする
         self.scrolling.activate_column(column_idx);
+
+        // 2. 【最重要】ビューを強制的に目標位置までスクロールさせる
+        // ここで target_x を直接指定して、ビューの先頭に合わせる
+        self.scrolling.animate_view_offset(column_idx, target_x);
+        eprintln!("TRACE: jump_to_layer() finished.");
     }
 }
 

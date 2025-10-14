@@ -552,6 +552,7 @@ impl State {
     }
 
     fn ipc_refresh_workspaces(&mut self) {
+        eprintln!("TRACE: ipc_refresh_workspaces() called.");
         let Some(server) = &self.niri.ipc_server else {
             return;
         };
@@ -586,6 +587,16 @@ impl State {
             {
                 need_workspaces_changed = true;
                 break;
+            }
+
+            let current_layer_idx = ws.current_layer_idx();
+            if ipc_ws.current_layer != current_layer_idx {
+                eprintln!("DEBUG: Layer changed! ws={}, from {} to {}", 
+                        id, ipc_ws.current_layer, current_layer_idx);
+                events.push(Event::WorkspaceLayerChanged {
+                    workspace_id: id as u32,
+                    current_layer: current_layer_idx,
+                });
             }
 
             let active_window_id = ws.active_window().map(|win| win.id().get());
@@ -637,6 +648,7 @@ impl State {
                         is_active: mon.is_some_and(|mon| mon.active_workspace_idx() == ws_idx),
                         is_focused: Some(id) == focused_ws_id,
                         active_window_id: ws.active_window().map(|win| win.id().get()),
+                        current_layer: ws.current_layer_idx(),
                     }
                 })
                 .collect();

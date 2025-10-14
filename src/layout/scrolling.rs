@@ -654,7 +654,7 @@ impl<W: LayoutElement> ScrollingSpace<W> {
         }
     }
 
-    fn animate_view_offset(&mut self, idx: usize, new_view_offset: f64) {
+    pub(super) fn animate_view_offset(&mut self, idx: usize, new_view_offset: f64) {
         self.animate_view_offset_with_config(
             idx,
             new_view_offset,
@@ -708,7 +708,7 @@ impl<W: LayoutElement> ScrollingSpace<W> {
         }
     }
 
-    fn animate_view_offset_to_column_centered(
+    pub(super) fn animate_view_offset_to_column_centered(
         &mut self,
         target_x: Option<f64>,
         idx: usize,
